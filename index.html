@@ -1,0 +1,104 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Voice Bot</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      margin: 0;
+      padding: 0;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+    }
+    h1 {
+      margin-bottom: 20px;
+    }
+    button {
+      background: transparent;
+      border: 2px solid #fff;
+      color: #fff;
+      padding: 10px 20px;
+      font-size: 18px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: #fff;
+      color: #000;
+      transform: scale(1.1);
+    }
+    #log {
+      margin-top: 20px;
+      max-width: 90%;
+      background: rgba(0,0,0,0.3);
+      padding: 15px;
+      border-radius: 10px;
+      text-align: left;
+      height: 200px;
+      overflow-y: auto;
+    }
+  </style>
+</head>
+<body>
+  <h1>AI Voice Bot</h1>
+  <button onclick="startBot()">🎙 Start Bot</button>
+  <div id="log"></div>
+  <script>
+    const logDiv = document.getElementById('log');
+
+    function logMessage(msg) {
+      logDiv.innerHTML += '<p>' + msg + '</p>';
+      logDiv.scrollTop = logDiv.scrollHeight;
+    }
+
+    function speak(text) {
+      const speech = new SpeechSynthesisUtterance(text);
+      speech.lang = 'hi-IN';
+      speechSynthesis.speak(speech);
+    }
+
+    function startBot() {
+      if (!('webkitSpeechRecognition' in window)) {
+        alert('Speech Recognition not supported! Use Chrome browser.');
+        return;
+      }
+      const recognition = new webkitSpeechRecognition();
+      recognition.lang = 'hi-IN';
+      recognition.continuous = false;
+      recognition.interimResults = false;
+
+      recognition.start();
+      logMessage('🎧 Sun raha hoon...');
+
+      recognition.onresult = function(event) {
+        const transcript = event.results[0][0].transcript;
+        logMessage('👤 Customer: ' + transcript);
+        let reply = '';
+
+        if (transcript.includes('recharge') || transcript.includes('plan')) {
+          reply = 'Aapke liye ek best recharge plan hai sirf 299 rupaye ka! Kya mai aapko abhi recharge kar du?';
+        } else {
+          reply = 'Mai samajh nahi paya, kya aap apne recharge ke bare me puch rahe hain?';
+        }
+
+        logMessage('🤖 Bot: ' + reply);
+        speak(reply);
+      };
+
+      recognition.onerror = function(event) {
+        logMessage('⚠️ Error: ' + event.error);
+      };
+    }
+  </script>
+</body>
+</html>
